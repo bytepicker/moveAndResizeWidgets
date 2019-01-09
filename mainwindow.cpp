@@ -60,6 +60,7 @@ void MainWindow::restoreSettings()
 
         connect(con, SIGNAL(newGeometry(QString, QRect)), this, SLOT(updateGeometry(QString, QRect)));
         connect(con, SIGNAL(wgtDelete(QString)), this, SLOT(widgetDelete(QString)));
+        connect(this, SIGNAL(inactivateWgts()), con, SLOT(finishEditing()));
 
         // move and resize widget
         con->resizeWgt(pos.size());
@@ -80,6 +81,7 @@ void MainWindow::addWidget(const QString &id, QWidget *wgt)
 
     connect(con, SIGNAL(newGeometry(QString,QRect)), this, SLOT(updateGeometry(QString,QRect)));
     connect(con, SIGNAL(wgtDelete(QString)), this, SLOT(widgetDelete(QString)));
+    connect(this, SIGNAL(inactivateWgts()), con, SLOT(finishEditing()));
 
     settings->setValue(id, con->geometry());
 }
@@ -87,6 +89,12 @@ void MainWindow::addWidget(const QString &id, QWidget *wgt)
 void MainWindow::widgetDelete(const QString &id)
 {
     settings->remove(id);
+}
+
+void MainWindow::mousePressEvent(QMouseEvent *e)
+{
+    if ( e->button() == Qt::RightButton)
+        emit inactivateWgts();
 }
 
 MainWindow::~MainWindow()

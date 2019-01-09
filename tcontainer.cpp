@@ -11,7 +11,7 @@ TContainer::TContainer(QWidget *parent, const QString &wgtId, QWidget *cWidget) 
     setAttribute(Qt::WA_DeleteOnClose);
     this->setVisible(true);
     this->setAutoFillBackground(false);
-    this->setStyleSheet("border-style: dotted; border-width: 1px;");
+
     this->setMouseTracking(true);
     this->setFocusPolicy(Qt::ClickFocus);
     this->setFocus();
@@ -30,6 +30,7 @@ TContainer::TContainer(QWidget *parent, const QString &wgtId, QWidget *cWidget) 
     if (cWidget != 0) {
         cWidget->setParent(this);
         cWidget->releaseMouse();
+
         cWidget->setAttribute(Qt::WA_TransparentForMouseEvents, true);
         vLayout->addWidget(cWidget);
         vLayout->setContentsMargins(0, 0, 0, 0);
@@ -44,6 +45,12 @@ TContainer::TContainer(QWidget *parent, const QString &wgtId, QWidget *cWidget) 
     this->installEventFilter(parent);
 }
 
+void TContainer::mouseDoubleClickEvent(QMouseEvent *e)
+{
+    if ( e->button() == Qt::LeftButton )
+        this->childWidget->setAttribute(Qt::WA_TransparentForMouseEvents, false);
+}
+
 void TContainer::moveWgt(QPoint p)
 {
     this->move(p);
@@ -52,6 +59,11 @@ void TContainer::moveWgt(QPoint p)
 void TContainer::resizeWgt(QSize s)
 {
     this->resize(s);
+}
+
+void TContainer::finishEditing()
+{
+    this->childWidget->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 }
 
 TContainer::~TContainer() {
@@ -76,8 +88,10 @@ void TContainer::focusOutEvent(QFocusEvent *) {
 
 void TContainer::mousePressEvent(QMouseEvent *e) {
     position = QPoint(e->globalX()-geometry().x(), e->globalY()-geometry().y());
+
     if (!m_isEditing) return;
     if (!m_infocus) return;
+
     if (!e->buttons() && Qt::LeftButton) {
         setCursorShape(e->pos());
         return;
@@ -188,6 +202,7 @@ void TContainer::mouseReleaseEvent(QMouseEvent *e) {
 
 void TContainer::mouseMoveEvent(QMouseEvent *e) {
     QWidget::mouseMoveEvent(e);
+
     if (!m_isEditing) return;
     if (!m_infocus) return;
     if (!e->buttons() && Qt::LeftButton) {

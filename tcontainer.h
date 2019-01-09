@@ -30,6 +30,9 @@ public:
     ~TContainer();
     QWidget *childWidget;
 
+protected slots:
+    void finishEditing();
+
 protected:
     QString id;
     int mode;
@@ -43,6 +46,7 @@ protected:
     void mousePressEvent(QMouseEvent*);
     void mouseReleaseEvent(QMouseEvent*);
     void mouseMoveEvent(QMouseEvent *);
+    void mouseDoubleClickEvent(QMouseEvent *);
 
     bool m_infocus;
     bool m_showMenu;

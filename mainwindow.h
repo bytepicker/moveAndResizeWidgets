@@ -17,6 +17,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+signals:
+    void inactivateWgts();
+
 protected slots:
     void restoreSettings();
     void updateGeometry(const QString &id, const QRect &g);
@@ -28,6 +31,9 @@ private slots:
     void on_pushButton_2_clicked();
     void on_pushButton_3_clicked();
     void on_pushButton_4_clicked();
+
+protected:
+    void mousePressEvent(QMouseEvent *e);
 
 private:
     Ui::MainWindow *ui;
